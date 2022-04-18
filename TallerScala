@@ -1,0 +1,52 @@
+// 1. Verificar si dos cadenas de texto son anagramas
+def sonAnagramas(str1: String, str2: String): Boolean =
+  str1.sorted == str2.sorted
+
+println(sonAnagramas("amina", "anima")) // true
+println(sonAnagramas("abc", "bcc"))     // false
+
+// 2. Verificar si tres valores enteros cumplen con el teorema de Pitágoras
+def pitagoras[T](a: T, b: T, sqrt: T => T)(implicit n: Numeric[T]) = {
+     import n.mkNumericOps
+     sqrt(a * a + b * b)
+     }
+pitagoras: [T](a: T,b: T,sqrt: (T) => T)(implicit n: Numeric[T])T
+
+scala> def intSqrt(n: Int) = Math.sqrt(n).toInt
+intSqrt: (n: Int)Int
+
+scala> pythagoras(3,4, intSqrt)
+res0: Int = 5
+
+// 3. Calcular y mostrar la cantidad de permutaciones completas que se pueden tener para n elementos de un conjunto
+def interleave(x:Int, l:List[Int]):List[List[Int]] = {
+  l match { 
+    case Nil => List(List(x))
+    case (head::tail) =>
+      (x :: head :: tail) :: interleave(x, tail).map(head :: _)
+  }
+}
+
+def permutations(l:List[Int]):List[List[Int]] = {
+  l match {
+    case Nil => List(List())
+    case (head::tail) =>
+      for(p0 <- permutations(tail); p1 <- interleave(head, p0)) yield p1
+  }
+}
+
+// 4. Mostrar todas los posibles  subconjuntos de tamaño k a partir de un conjunto de n datos (Combinatoria)
+def choices(N: Int, k: Int): List[List[Int]] = {
+  if (k == 1) (1 to N).toList.map(x => List(x))
+  else if (N < k) Nil
+  else (1 to 1 + N - k).toList.flatMap{ i =>
+    choices(N-i,k-1).map(xs => i :: xs.map(_ + i))
+  }
+}
+
+// 5. Mostrar el triángulo de Pascal recibiendo un n como parámetro
+def pascalTriangle(c: Int, r: Int): Int = {
+  if (c == 0 || (c == r)) 1
+  else
+    pascalTriangle(c-1, r-1) + pascalTriangle(c, r - 1)
+}
