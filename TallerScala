@@ -1,52 +1,89 @@
-// 1. Verificar si dos cadenas de texto son anagramas
+// 1. Verificar si dos cadenas de texto son anagramas:
 def sonAnagramas(str1: String, str2: String): Boolean =
   str1.sorted == str2.sorted
 
 println(sonAnagramas("amina", "anima")) // true
 println(sonAnagramas("abc", "bcc"))     // false
 
-// 2. Verificar si tres valores enteros cumplen con el teorema de Pitágoras
-def pitagoras[T](a: T, b: T, sqrt: T => T)(implicit n: Numeric[T]) = {
-     import n.mkNumericOps
-     sqrt(a * a + b * b)
-     }
-pitagoras: [T](a: T,b: T,sqrt: (T) => T)(implicit n: Numeric[T])T
-
-scala> def intSqrt(n: Int) = Math.sqrt(n).toInt
-intSqrt: (n: Int)Int
-
-scala> pythagoras(3,4, intSqrt)
-res0: Int = 5
-
-// 3. Calcular y mostrar la cantidad de permutaciones completas que se pueden tener para n elementos de un conjunto
-def interleave(x:Int, l:List[Int]):List[List[Int]] = {
-  l match { 
-    case Nil => List(List(x))
-    case (head::tail) =>
-      (x :: head :: tail) :: interleave(x, tail).map(head :: _)
+// 2. Verificar si tres valores enteros cumplen con el teorema de Pitágoras:
+ def teoremaPitagoras(arrayNumbers: Array[Int], array_size: Int): Boolean = {
+    for (i <- 0 until array_size) {
+      for (j <- i + 1 until array_size) {
+        for (k <- j + 1 until array_size) { 
+          val x = arrayNumbers(i) * arrayNumbers(i)
+          val y = arrayNumbers(j) * arrayNumbers(j)
+          val z = arrayNumbers(k) * arrayNumbers(k)
+          if (x == y + z || y == x + z || z == x + y) return true
+        }
+      }
+    }
+    return false
   }
-}
 
-def permutations(l:List[Int]):List[List[Int]] = {
-  l match {
-    case Nil => List(List())
-    case (head::tail) =>
-      for(p0 <- permutations(tail); p1 <- interleave(head, p0)) yield p1
+// 3. Calcular y mostrar la cantidad de permutaciones completas que se pueden tener para n elementos de un conjunto:
+def funcionRecursiva(x: Int, y: Int): Int = {
+    if (y == 1) return x
+    if (y == 0) return 1
+    var temp = funcionRecursiva(x, y / 2)
+    temp *= temp
+    if (y % 2 == 1) temp *= x
+    temp
   }
-}
+
+  def permutaciones(set: Array[Int], n: Int): Int = {
+    if (n == 1) return 1
+    util.Arrays.sort(set)
+    var elementsTwice = 0
+    var index = 0
+    while ( {
+      index < n - 2
+    }) {
+      if (set(index) == set(index + 1)) {
+        if (set(index) == set(index + 2)) {
+          return 0
+        }
+        elementsTwice += 1
+        index += 1
+      }
+      index += 1
+    }
+    funcionRecursiva(2, n - 2 * elementsTwice - 1)
+  }
 
 // 4. Mostrar todas los posibles  subconjuntos de tamaño k a partir de un conjunto de n datos (Combinatoria)
-def choices(N: Int, k: Int): List[List[Int]] = {
-  if (k == 1) (1 to N).toList.map(x => List(x))
-  else if (N < k) Nil
-  else (1 to 1 + N - k).toList.flatMap{ i =>
-    choices(N-i,k-1).map(xs => i :: xs.map(_ + i))
+def combinaciones(occurrences: List[(Char,Int)]) : List[List[(Char,Int)]] = {
+    val totalCoins = occurrences.map(_._2).sum
+
+    def añadirPar(counter: List[(Char, Int)], element: (Char, Int)) = {
+      val countMap = counter.toMap
+      (countMap + (element._1 -> (countMap.getOrElse(element._1, 0) + element._2))).toList
+    }
+
+    def combinations(occurs: List[(Char,Int)], n: Int): List[List[(Char,Int)]] = {
+      if(n == 0) List(List())
+      else if(occurs.isEmpty) List()
+      else {
+        val firstElement = if(occurs.head._2 == 1) List() else List((occurs.head._1, 1))
+        val cabezaComb = combinaciones(firstElement ++ occurs.tail, n - 1)
+        val colaComb = combinaciones(occurs.tail, n)
+
+        cabezaComb.map(añadirPar(_, (occurs.head._1, 1))) ++ colaComb
+      }
+    }
+    (0 to totalCoins).toList.flatMap(combinations(occurrences, _))
   }
-}
 
 // 5. Mostrar el triángulo de Pascal recibiendo un n como parámetro
-def pascalTriangle(c: Int, r: Int): Int = {
-  if (c == 0 || (c == r)) 1
-  else
-    pascalTriangle(c-1, r-1) + pascalTriangle(c, r - 1)
-}
+def mostrarTrianguloPascal(n: Int): Unit = {
+    for (line <- 1 to n) {
+      for (j <- 0 to n - line) { 
+        System.out.print(" ")
+      }
+      var C = 1
+      for (i <- 1 to line) { 
+        System.out.print(C + " ")
+        C = C * (line - i) / i
+      }
+      System.out.println()
+    }
+  }
